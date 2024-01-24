@@ -1,0 +1,170 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations
+<DataGrid TItem="Project"
+          Data="Projects"
+          Editable
+          SortMode="DataGridSortMode.Single"
+          Narrow
+          ResizeMode="TableResizeMode.Columns"
+          UseValidation="true"
+          ShowValidationFeedback="true"
+          ShowValidationsSummary="false"
+>
+    <DataGridColumns>
+        <DataGridColumn Width="5rem" Field="@nameof(Project.Id)" Caption="#" />
+        <DataGridColumn Width=" " Field="ClientId" Caption="Client" Editable>
+            <DisplayTemplate>
+                @{
+                    @context.ClientId
+                }
+            </DisplayTemplate>
+            <EditTemplate>
+                @{
+                    <Autocomplete  Validator="(e) => ValidateAutocomplete(e)"    Data="Clients" Filter="AutocompleteFilter.Contains" HighlightSearch="true" FreeTyping="false"  MinLength="0" @bind-SelectedValue="@context.CellValue" Placeholder="Select client..." TextField="_ => _.Name" ValueField="_ => _.Id"/>
+                }
+            </EditTemplate>
+        </DataGridColumn>
+      
+        <DataGridColumn Width="20rem" Field="@nameof(Project.Name)"  Caption="Name" Editable />
+        <DataGridCommandColumn >
+          
+        </DataGridCommandColumn>
+    </DataGridColumns>
+</DataGrid>
+
+<DataGrid TItem="Project"
+          Data="Projects"
+          Editable
+          SortMode="DataGridSortMode.Single"
+          Narrow
+          ResizeMode="TableResizeMode.Columns"
+          UseValidation="true"
+          ShowValidationFeedback="true"
+          ShowValidationsSummary="false"
+>
+    <DataGridColumns>
+        <DataGridColumn Width="5rem" Field="@nameof(Project.Id)" Caption="#" />
+    
+        <DataGridColumn Width=" " Field="ClientId" Caption="Client" Editable>
+            <DisplayTemplate>
+                @{
+                    @context.ClientId
+                }
+            </DisplayTemplate>
+            <EditTemplate>
+                @{
+                    <Autocomplete  Validator="(e) => ValidateAutocomplete(e)"    Data="Clients" Filter="AutocompleteFilter.Contains" HighlightSearch="true" FreeTyping="false"  MinLength="0" @bind-SelectedValue="@context.CellValue" Placeholder="Select client..." TextField="_ => _.DisplayName" ValueField="_ => _.Id"/>
+                }
+            </EditTemplate>
+        </DataGridColumn>
+        <DataGridColumn Width="20rem" Field="@nameof(Project.Name)"  Caption="Name" Editable />
+        <DataGridCommandColumn >
+          
+        </DataGridCommandColumn>
+    </DataGridColumns>
+</DataGrid>
+
+@code {
+    public class Project
+    {
+        public int Id { get; set; }
+      
+        [Required]
+        public int ClientId { get; set; }
+       
+        [Required]
+        public string Name { get; set; }
+ 
+    }
+
+    public class Client
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string ContactName { get; set; }
+        public string ContactEmail { get; set; }
+        public string ContactPhone { get; set; }
+        public string DisplayName => $"{Id} - {Name}";
+
+
+    }
+
+    // Sample data with explicitly set IDs and stored in lists
+    List<Client> Clients { get; set; } = new List<Client>
+    {
+        new Client
+        {
+            Id = 1,
+            Name = "Client A",
+            Address = "123 Main Street",
+            ContactName = "John Doe",
+            ContactEmail = "john@example.com",
+            ContactPhone = "123-456-7890"
+        },
+        new Client
+        {
+            Id = 2,
+            Name = "Client A",
+            Address = "456 Elm Street",
+            ContactName = "Jane Smith",
+            ContactEmail = "jane@example.com",
+            ContactPhone = "987-654-3210"
+        },
+        new Client
+        {
+            Id = 3,
+            Name = "Client A",
+            Address = "456 El234234m Street",
+            ContactName = "Jan234e Smith",
+            ContactEmail = "jane234@example.com",
+            ContactPhone = "987-654-3210"
+        }
+    };
+ 
+
+    List<Project> Projects { get; set; }  = new List<Project>
+    {
+        new Project
+        {
+            Id = 1,
+            Name = "Project X",
+            ClientId = 1 // Associate with Client A
+        },
+        new Project
+        {
+            Id = 2,
+            Name = "Project Y",
+            ClientId = 1 // Associate with Client A
+        },
+        new Project
+        {
+            Id = 3,
+            Name = "Project Z",
+            ClientId = 2 // Associate with Client B
+        },
+        new Project
+        {
+            Id = 4,
+            Name = "Project W",
+            ClientId = 2 // Associate with Client B
+        }
+    };
+
+
+    private static Action<ValidatorEventArgs> OnValidate(CellEditContext<Project> context)
+    {
+        return _ => _.Status = Convert.ToInt32( context.CellValue)  == 0 ? ValidationStatus.Error: ValidationStatus.Success;
+    }
+
+    public void ValidateAutocomplete(ValidatorEventArgs e )
+    {
+        var value = Convert.ToInt32(e.Value);
+         
+        e.Status =  value > 0 ? ValidationStatus.Success : ValidationStatus.Error;
+        e.ErrorText = "Please select a client.";
+
+    }
+
+
+}
