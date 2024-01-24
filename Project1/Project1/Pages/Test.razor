@@ -12,18 +12,8 @@
 >
     <DataGridColumns>
         <DataGridColumn Width="5rem" Field="@nameof(Project.Id)" Caption="#" />
-        <DataGridColumn Width=" " Field="ClientId" Caption="Client" Editable>
-            <DisplayTemplate>
-                @{
-                    @context.ClientId
-                }
-            </DisplayTemplate>
-            <EditTemplate>
-                @{
-                    <Autocomplete  Validator="(e) => ValidateAutocomplete(e)"    Data="Clients" Filter="AutocompleteFilter.Contains" HighlightSearch="true" FreeTyping="false"  MinLength="0" @bind-SelectedValue="@context.CellValue" Placeholder="Select client..." TextField="_ => _.Name" ValueField="_ => _.Id"/>
-                }
-            </EditTemplate>
-        </DataGridColumn>
+        <DataGridSelectColumn Width="10rem" Field="@nameof(Project.ClientId)" Data="Clients"   TItem="Client" ValueField="(_ ) => ((Client )_).Id" TextField="( _) => ((Client )_).Name" Caption="#"  Editable="true"/>
+      
       
         <DataGridColumn Width="20rem" Field="@nameof(Project.Name)"  Caption="Name" Editable />
         <DataGridCommandColumn >
@@ -31,38 +21,7 @@
         </DataGridCommandColumn>
     </DataGridColumns>
 </DataGrid>
-
-<DataGrid TItem="Project"
-          Data="Projects"
-          Editable
-          SortMode="DataGridSortMode.Single"
-          Narrow
-          ResizeMode="TableResizeMode.Columns"
-          UseValidation="true"
-          ShowValidationFeedback="true"
-          ShowValidationsSummary="false"
->
-    <DataGridColumns>
-        <DataGridColumn Width="5rem" Field="@nameof(Project.Id)" Caption="#" />
-    
-        <DataGridColumn Width=" " Field="ClientId" Caption="Client" Editable>
-            <DisplayTemplate>
-                @{
-                    @context.ClientId
-                }
-            </DisplayTemplate>
-            <EditTemplate>
-                @{
-                    <Autocomplete  Validator="(e) => ValidateAutocomplete(e)"    Data="Clients" Filter="AutocompleteFilter.Contains" HighlightSearch="true" FreeTyping="false"  MinLength="0" @bind-SelectedValue="@context.CellValue" Placeholder="Select client..." TextField="_ => _.DisplayName" ValueField="_ => _.Id"/>
-                }
-            </EditTemplate>
-        </DataGridColumn>
-        <DataGridColumn Width="20rem" Field="@nameof(Project.Name)"  Caption="Name" Editable />
-        <DataGridCommandColumn >
-          
-        </DataGridCommandColumn>
-    </DataGridColumns>
-</DataGrid>
+ 
 
 @code {
     public class Project
